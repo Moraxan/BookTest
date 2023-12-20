@@ -14,6 +14,6 @@ namespace BookTest.Data.Entities
         [MaxLength(80), Required] //Could make this a longer string but 80 should be enough for most names
         public string? Name { get; set; }
 
-        public ICollection<AuthorBook> AuthorBooks { get; set; }
+        public ICollection<AuthorBook>? AuthorBooks { get; set; }
     }
 }

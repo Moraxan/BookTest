@@ -41,7 +41,7 @@ namespace BookTest.Data.Contexts
 
         }
 
-        private void SeedData(ModelBuilder modelBuilder)
+        private static void SeedData(ModelBuilder modelBuilder)
         {
             var authors = new List<Author>
             {
@@ -52,24 +52,23 @@ namespace BookTest.Data.Contexts
             };
             var books = new List<Book>
             {
-                new Book() { Id = 1, Title = "Harry Potter and the Philosopher's Stone", PublicationDate = new DateTime(1997, 6, 26) },
-                new Book() { Id = 2, Title = "Harry Potter and the Chamber of Secrets", PublicationDate = new DateTime(1998, 7, 2) },
-                new Book() { Id = 3, Title = "Harry Potter and the Prisoner of Azkaban", PublicationDate = new DateTime(1999, 7, 8) },
-                new Book() { Id = 4, Title = "Harry Potter and the Goblet of Fire", PublicationDate = new DateTime(2000, 7, 8) },
-                new Book() { Id = 5, Title = "Harry Potter and the Order of the Phoenix", PublicationDate = new DateTime(2003, 6, 21) },
-                new Book() { Id = 6, Title = "Harry Potter and the Half-Blood Prince", PublicationDate = new DateTime(2005, 7, 16) },
-                new Book() { Id = 7, Title = "Harry Potter and the Deathly Hallows", PublicationDate = new DateTime(2007, 7, 21) },
-                new Book() { Id = 8, Title = "The Hobbit", PublicationDate = new DateTime(1937, 9, 21) },
-                new Book() { Id = 9, Title = "The Fellowship of the Ring", PublicationDate = new DateTime(1954, 7, 29) },
-                new Book() { Id = 10, Title = "The Two Towers", PublicationDate = new DateTime(1954, 11, 11) },
-                new Book() { Id = 11, Title = "The Return of the King", PublicationDate = new DateTime(1955, 10, 20) },
-                new Book() { Id = 12, Title = "A Game of Thrones", PublicationDate = new DateTime(1996, 8, 1) },
-                new Book() { Id = 13, Title = "A Clash of Kings", PublicationDate = new DateTime(1998, 11, 16) },
-                new Book() { Id = 14, Title = "A Storm of Swords", PublicationDate = new DateTime(2000, 8, 8) },
-                new Book() { Id = 15, Title = "A Feast for Crows", PublicationDate = new DateTime(2005, 11, 8) },
-                new Book() { Id = 16, Title = "A Dance with Dragons", PublicationDate = new DateTime(2011, 7, 12) },
-                new Book() { Id = 17, Title = "The Shining", PublicationDate = new DateTime(1977, 1, 28) },
-                new Book() { Id = 18, Title = "It", PublicationDate = new DateTime(1986, 9, 15) },
+                new () { Id = 1, Title = "Harry Potter and the Philosopher's Stone", PublicationDate = new DateTime(1997, 6, 26) },
+                new () { Id = 2, Title = "Harry Potter and the Chamber of Secrets", PublicationDate = new DateTime(1998, 7, 2) },
+                new () { Id = 3, Title = "Harry Potter and the Prisoner of Azkaban", PublicationDate = new DateTime(1999, 7, 8) },
+                new () { Id = 5, Title = "Harry Potter and the Order of the Phoenix", PublicationDate = new DateTime(2003, 6, 21) },
+                new () { Id = 6, Title = "Harry Potter and the Half-Blood Prince", PublicationDate = new DateTime(2005, 7, 16) },
+                new () { Id = 8, Title = "The Hobbit", PublicationDate = new DateTime(1937, 9, 21) },
+                new () { Id = 9, Title = "The Fellowship of the Ring", PublicationDate = new DateTime(1954, 7, 29) },
+                new () { Id = 10, Title = "The Two Towers", PublicationDate = new DateTime(1954, 11, 11) },
+                new () { Id = 11, Title = "The Return of the King", PublicationDate = new DateTime(1955, 10, 20) },
+                new () { Id = 12, Title = "A Game of Thrones", PublicationDate = new DateTime(1996, 8, 1) },
+                new () { Id = 13, Title = "A Clash of Kings", PublicationDate = new DateTime(1998, 11, 16) },
+                new () { Id = 14, Title = "A Storm of Swords", PublicationDate = new DateTime(2000, 8, 8) },
+                new () { Id = 15, Title = "A Feast for Crows", PublicationDate = new DateTime(2005, 11, 8) },
+                new () { Id = 16, Title = "A Dance with Dragons", PublicationDate = new DateTime(2011, 7, 12) },
+                new () { Id = 17, Title = "The Shining", PublicationDate = new DateTime(1977, 1, 28) },
+                new () { Id = 18, Title = "It", PublicationDate = new DateTime(1986, 9, 15) },
+                new () { Id = 7, Title = "Harry Potter and the Deathly Hallows", PublicationDate = new DateTime(2007, 7, 21) },
             };
 
             modelBuilder.Entity<Author>().HasData(authors);

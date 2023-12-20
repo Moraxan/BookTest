@@ -13,6 +13,6 @@ namespace BookTest.Data.Entities
                 
         public DateTime? PublicationDate { get; set; }
 
-        public ICollection<AuthorBook> AuthorBooks { get; set; }
+        public ICollection<AuthorBook>? AuthorBooks { get; set; }
     }
 }
