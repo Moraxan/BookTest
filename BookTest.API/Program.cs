@@ -13,7 +13,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<BookContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BookConnection")));
-
 builder.Services.AddScoped<IDbService, DbService>();
 
 
@@ -38,18 +37,18 @@ app.MapControllers();
 
 app.Run();
 
-static void ConfigureAutomapper(IServiceCollection services)
+void ConfigureAutomapper(IServiceCollection services)
 {
     var mapperConfig = new MapperConfiguration(cfg =>
-    {
-        // Map Author to AuthorDTO
-        cfg.CreateMap<Author, AuthorDTO>()
-           .ForMember(dest => dest.BookIds, act => act.MapFrom(src => src.AuthorBooks.Select(ab => ab.Book.Id)));
+{
+    // Map Author to AuthorDTO
+    cfg.CreateMap<Author, AuthorDTO>()
+       .ForMember(dest => dest.BookIds, act => act.MapFrom(src => src.AuthorBooks.Select(ab => ab.Book.Id)));
 
-        // Map Book to BookDTO
-        cfg.CreateMap<Book, BookDTO>()
-           .ForMember(dest => dest.AuthorIds, act => act.MapFrom(src => src.AuthorBooks.Select(ab => ab.Author.Id)));
-    });
+    // Map Book to BookDTO
+    cfg.CreateMap<Book, BookDTO>()
+       .ForMember(dest => dest.AuthorIds, act => act.MapFrom(src => src.AuthorBooks.Select(ab => ab.Author.Id)));
+});
 
 
     IMapper mapper = mapperConfig.CreateMapper();

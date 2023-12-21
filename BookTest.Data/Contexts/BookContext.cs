@@ -1,4 +1,5 @@
 ﻿using BookTest.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,22 +10,26 @@ namespace BookTest.Data.Contexts
 {
     public class BookContext : DbContext
     {
-        DbSet<Book>? Books { get; set; }
-        DbSet<Author>? Authors { get; set; }
+        DbSet<Book> Books { get; set; }
+        DbSet<Author> Authors { get; set; }
 
-        DbSet<AuthorBook>? AuthorBooks { get; set; }
+        DbSet<AuthorBook> AuthorBooks { get; set; }
 
-        DbSet<Quotation>? Quotations { get; set; }
+        DbSet<Quotation> Quotations { get; set; }
 
-        DbSet<User>? Users { get; set; }
+        DbSet<User> Users { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //Use Lazy Loading
-            optionsBuilder.UseLazyLoadingProxies();
-            // Specify the database to use (e.g., SQL Server)
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=BookTest;Trusted_Connection=True;");
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    //Use Lazy Loading
+        //    optionsBuilder.UseLazyLoadingProxies();
+        //    // Specify the database to use (e.g., SQL Server)
+        //    optionsBuilder.UseSqlServer(
+        //        "Server=(localdb)\\mssqllocaldb;Database=BookTest;Trusted_Connection=True");
+
+
+
+        //}
         public BookContext(DbContextOptions <BookContext> options) : base(options)
         {
             
