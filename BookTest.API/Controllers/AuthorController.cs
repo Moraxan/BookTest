@@ -13,46 +13,68 @@ namespace AuthorTest.API.Controllers
            _db = db;    
         }
 
-              
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAllAuthors()
         {
-            return await _db.GetAsync<Author, AuthorDTO>();
-        }
-      
-        [HttpGet("{id}")]
-            public async Task<ActionResult<AuthorDTO>> GetSingleAuthor(int id)
-        {
-            return await _db.SingleAsync<Author, AuthorDTO>(b => b.Id == id);
-        }
-       
-        [HttpPut("{id}")]
-            public async Task<IActionResult> PutAuthor(int id, AuthorDTO Author)
-        {
-            if (id != Author.Id)
+            try
             {
-                return BadRequest();
+                return await _db.GetAsync<Author, AuthorDTO>();
             }
-            await _db.UpdateAsync<Author, AuthorDTO>(Author);
-            return NoContent();
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while retrieving authors.");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<AuthorDTO>> GetSingleAuthor(int id)
+        {
+            try
+            {
+                return await _db.SingleAsync<Author, AuthorDTO>(b => b.Id == id);
+            }
+            catch (Exception ex)
+            {
+                
+                return StatusCode(500, "An error occurred while retrieving the author.");
+            }
         }
 
         [HttpPost]
-            public async Task<ActionResult<AuthorDTO>> PostAuthor(AuthorDTO Author)
+        public async Task<ActionResult<AuthorDTO>> PostAuthor(AuthorDTO Author)
         {
-            return await _db.AddAsync<Author, AuthorDTO>(Author);
+            try
+            {
+                return await _db.AddAsync<Author, AuthorDTO>(Author);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while adding the author.");
+            }
         }
-       
+
+
+
+
         [HttpDelete("{id}")]
-            public async Task<IActionResult> DeleteAuthor(int id)
+        public async Task<IActionResult> DeleteAuthor(int id)
         {
-            await _db.DeleteAsync<Author>(id);
-            return NoContent();
+            try
+            {
+                await _db.DeleteAsync<Author>(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while deleting the author.");
+            }
         }
-            
-                
-        
-        
+
+
+
+
+
     }
 
 }
