@@ -4,6 +4,7 @@ using BookTest.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookTest.Data.Migrations
 {
     [DbContext(typeof(BookContext))]
-    partial class BookContextModelSnapshot : ModelSnapshot
+    [Migration("20231221125952_databaseinit")]
+    partial class databaseinit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,13 +111,13 @@ namespace BookTest.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 2,
-                            Name = "J.R.R. Tolkien"
+                            Id = 1,
+                            Name = "J.K. Rowling"
                         },
                         new
                         {
-                            Id = 1,
-                            Name = "J.K. Rowling"
+                            Id = 2,
+                            Name = "J.R.R. Tolkien"
                         },
                         new
                         {

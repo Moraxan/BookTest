@@ -1,5 +1,4 @@
-﻿using BookTest.Data.Interfaces;
-using System.ComponentModel.DataAnnotations;
+﻿
 
 
 namespace BookTest.Data.Entities
@@ -13,6 +12,6 @@ namespace BookTest.Data.Entities
                 
         public DateTime? PublicationDate { get; set; }
 
-        public ICollection<AuthorBook>? AuthorBooks { get; set; }
+        public virtual ICollection<AuthorBook> AuthorBooks { get; set; } = new List<AuthorBook>();
     }
 }
