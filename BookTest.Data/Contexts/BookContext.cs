@@ -19,17 +19,15 @@ namespace BookTest.Data.Contexts
 
         DbSet<User> Users { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    //Use Lazy Loading
-        //    optionsBuilder.UseLazyLoadingProxies();
-        //    // Specify the database to use (e.g., SQL Server)
-        //    optionsBuilder.UseSqlServer(
-        //        "Server=(localdb)\\mssqllocaldb;Database=BookTest;Trusted_Connection=True");
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            //Use Lazy Loading
+            optionsBuilder.UseLazyLoadingProxies();
+            // Specify the database to use (e.g., SQL Server)
+            optionsBuilder.UseSqlServer(
+                "Server=(localdb)\\mssqllocaldb;Database=BookTest;Trusted_Connection=True");
 
-
-
-        //}
+        }
         public BookContext(DbContextOptions <BookContext> options) : base(options)
         {
             
