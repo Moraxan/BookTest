@@ -42,12 +42,21 @@ static void ConfigureAutomapper(IServiceCollection services)
     var mapperConfig = new MapperConfiguration(cfg =>
 {
     // Map Author to AuthorDTO
-    cfg.CreateMap<Author, AuthorBaseDTO>()
-       .ForMember(dest => dest.BookIds, act => act.MapFrom(src => src.AuthorBooks.Select(ab => ab.Book.Id))).ReverseMap();
+    cfg.CreateMap<Author, AuthorDTO>()
+   .ReverseMap();
+    cfg.CreateMap<Author, AuthorReadDTO>()
+    .ForMember(dest => dest.BookIds,
+               opt => opt.MapFrom(src => src.AuthorBooks.Select(ab => ab.BookId)));
 
     // Map Book to BookDTO
-    cfg.CreateMap<Book, BookBaseDTO>()
-       .ForMember(dest => dest.AuthorIds, act => act.MapFrom(src => src.AuthorBooks.Select(ab => ab.Author.Id))).ReverseMap();
+    cfg.CreateMap<Book, BookDTO>()
+    .ReverseMap();
+    cfg.CreateMap<Book, BookReadDTO>()
+    .ForMember(dest => dest.AuthorIds,
+               opt => opt.MapFrom(src => src.AuthorBooks.Select(ab => ab.AuthorId)));
+
+    cfg.CreateMap<AuthorBook, AuthorBookDTO>().ReverseMap();
+
 });
 
 

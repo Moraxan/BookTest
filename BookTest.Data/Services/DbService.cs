@@ -98,7 +98,7 @@
             if (propertyNames is null) return;
 
             foreach (var name in propertyNames)
-                _db.Set<TEntity>().Include(name).Load();
+              await  _db.Set<TEntity>().Include(name).LoadAsync();
 
         }
 
@@ -112,5 +112,8 @@
         {
             return $"/{typeof(TEntity).Name.ToLower()}s/{entity.Id}";
         }
+
+        
+
     }
 }

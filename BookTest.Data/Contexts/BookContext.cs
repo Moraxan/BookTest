@@ -1,12 +1,4 @@
-﻿using BookTest.Data.Entities;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BookTest.Data.Contexts
+﻿namespace BookTest.Data.Contexts
 {
     public class BookContext : DbContext
     {

@@ -26,5 +26,6 @@
         void Update<TEntity, TDto>(TDto dto, int id)
             where TEntity : class, IEntity
             where TDto : class;
+
     }
 }

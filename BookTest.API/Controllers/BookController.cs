@@ -1,7 +1,7 @@
 ﻿namespace BookTest.API.Controllers
 {
     [ApiController]
-    [Route("api/books")]
+    [Route("api/Books")]
     public class BookController : Controller
     {
         private readonly IDbService _db;
@@ -12,38 +12,66 @@
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookBaseDTO>>> GetAllBooks()
+        public async Task<ActionResult<IEnumerable<BookReadDTO>>> GetAllBooks()
         {
             try
             {
-                return await _db.GetAllAsync<Book, BookBaseDTO>();
+                return await _db.GetAsync<Book, BookReadDTO>();
             }
             catch (Exception)
             {
-                return StatusCode(500, "An internal error occurred while retrieving books.");
+                return StatusCode(500, "An internal error occurred while retrieving Books.");
             }
         }
-
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookBaseDTO>> GetSingleBook(int id)
+        public async Task<ActionResult<BookDTO>> GetSingleBook(int id)
         {
             try
             {
-                var book = await _db.GetSingleAsync<Book, BookBaseDTO>(b => b.Id == id);
-                if (book == null)
+                var Book = await _db.SingleAsync<Book, BookDTO>(b => b.Id == id);
+                if (Book == null)
                 {
                     return NotFound();
                 }
-                return book;
+                return Book;
             }
             catch (Exception)
             {
-                return StatusCode(500, "An internal error occurred while retrieving the book.");
+                return StatusCode(500, "An internal error occurred while retrieving the Book.");
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Book>> CreateBook(BookDTO createBookDto)
+        {
+            try
+            {
+                // Check if Book already exists
+                bool bookExists = await _db.AnyAsync<Book>(a => a.Title == createBookDto.Title);
+                if (bookExists)
+                {
+                    return BadRequest("Book already exists.");
+                }
+
+                // Add new Book
+                var bookEntity = await _db.AddAsync<Book, BookDTO>(createBookDto);
+                await _db.SaveChangesAsync();
+
+                if (bookEntity == null)
+                {
+                    return BadRequest("Book could not be created.");
+                }
+
+                return Ok(bookEntity); // Returns a 200 OK response with the Book entity
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while creating the Book.");
             }
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook(int id, UpdateBookDTO updateBookDto)
+        public async Task<IActionResult> UpdateBook(int id, [FromBody] BookReadDTO updateBookDto)
         {
             try
             {
@@ -52,48 +80,31 @@
                     return BadRequest("Book ID mismatch.");
                 }
 
-                await _db.UpdateAsync<Book, BookBaseDTO>(updateBookDto);
+                _db.Update<Book, BookReadDTO>(updateBookDto, id);
+                await _db.SaveChangesAsync();
                 return NoContent();
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while updating the book. Please try again later.");
+                return StatusCode(500, "An error occurred while updating the Book. Please try again later.");
             }
         }
-
-        [HttpPost]
-        public async Task<ActionResult<Book>> CreateBook(CreateBookDTO createBookDto)
-        {
-            try
-            {
-                var BookEntity = await _db.AddAsync<Book, CreateBookDTO>(createBookDto);
-                await _db.SaveChangesAsync();
-
-                if (BookEntity == null)
-                {
-                    return BadRequest("Book could not be created.");
-                }
-
-                return Ok(BookEntity); // Returns a 200 OK response with the Book entity
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "An error occurred while creating the book.");
-            }
-        }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
             try
             {
                 await _db.DeleteAsync<Book>(id);
+                await _db.SaveChangesAsync();
                 return NoContent();
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while attempting to delete the book. Please try again later.");
+                return StatusCode(500, "An error occurred while deleting the Book. Please try again later.");
             }
         }
+
+
+
     }
 }
