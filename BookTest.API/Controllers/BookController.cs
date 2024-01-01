@@ -46,14 +46,14 @@
         {
             try
             {
-                // Check if Book already exists
-                bool bookExists = await _db.AnyAsync<Book>(a => a.Title == createBookDto.Title);
+                // Check if book already exists
+                bool bookExists = await _db.AnyAsync<Book>(b => b.Title == createBookDto.Title);
                 if (bookExists)
                 {
                     return BadRequest("Book already exists.");
                 }
 
-                // Add new Book
+                // Add new book
                 var bookEntity = await _db.AddAsync<Book, BookDTO>(createBookDto);
                 await _db.SaveChangesAsync();
 
@@ -62,13 +62,25 @@
                     return BadRequest("Book could not be created.");
                 }
 
-                return Ok(bookEntity); // Returns a 200 OK response with the Book entity
+                // Optional: Add authors if provided
+                if (createBookDto.AuthorIds != null)
+                {
+                    foreach (var authorId in createBookDto.AuthorIds)
+                    {
+                        var authorBookDto = new AuthorBookDTO { BookId = bookEntity.Id, AuthorId = authorId };
+                        await _db.AddReferenceAsync<AuthorBook, AuthorBookDTO>(authorBookDto);
+                    }
+                    await _db.SaveChangesAsync();
+                }
+
+                return Ok(bookEntity);
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while creating the Book.");
+                return StatusCode(500, "An error occurred while creating the book.");
             }
         }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBook(int id, BookReadDTO updateBookDto)
         {
@@ -76,16 +88,34 @@
             {
                 if (id != updateBookDto.Id)
                 {
-                    return BadRequest("Author ID mismatch.");
+                    return BadRequest("Book ID mismatch.");
                 }
 
-                _db.Update<Book, BookReadDTO>(updateBookDto, id);
+                var book = await _db.SingleAsync<Book, BookDTO>(b => b.Id == id);
+                if (book == null)
+                {
+                    return NotFound();
+                }
+
+                // Update book properties here, e.g., book.Title = updateBookDto.Title;
+
+                // Handle authors
+                // Delete existing relationships for this book
+                await _db.DeleteByCompositeKey<AuthorBook>(ba => ba.BookId == id);
+
+                // Add new relationships
+                foreach (var authorId in updateBookDto.AuthorIds)
+                {
+                    var authorBookDto = new AuthorBookDTO { BookId = id, AuthorId = authorId };
+                    await _db.AddReferenceAsync<AuthorBook, AuthorBookDTO>(authorBookDto);
+                }
+
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while updating the author. Please try again later.");
+                return StatusCode(500, "An error occurred while updating the book.");
             }
         }
 

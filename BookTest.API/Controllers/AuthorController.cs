@@ -76,7 +76,7 @@
 
                 return Ok(authorEntity); // Returns a 200 OK response with the Author entity
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception for debugging
                 // LogError(ex, "Error occurred while creating the author.");
@@ -117,7 +117,7 @@
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception details for debugging purposes
                 // LogError(ex, "Error occurred in PutAuthor");
