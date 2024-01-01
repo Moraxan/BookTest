@@ -1,6 +1,9 @@
-﻿public class User : IEntity
+﻿namespace BookTest.Data.Entities
 {
-    public int Id { get; set; }
-    public string Username { get; set; }
-    
+    public class User : IEntity
+    {
+        public int Id { get; set; }
+        public string Username { get; set; }
+
+    }
 }

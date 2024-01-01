@@ -1,7 +1,4 @@
-﻿
-
-
-namespace BookTest.Data.Entities
+﻿namespace BookTest.Data.Entities
 {
     public class Book : IEntity
     {

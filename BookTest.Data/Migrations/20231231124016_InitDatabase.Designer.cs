@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookTest.Data.Migrations
 {
     [DbContext(typeof(BookContext))]
-    [Migration("20231221131320_relationsfix")]
-    partial class relationsfix
+    [Migration("20231231124016_InitDatabase")]
+    partial class InitDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,21 +23,6 @@ namespace BookTest.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("AuthorBook", b =>
-                {
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AuthorId", "BookId");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("AuthorBooks");
-                });
 
             modelBuilder.Entity("BookTest.Data.Entities.Author", b =>
                 {
@@ -55,6 +40,21 @@ namespace BookTest.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Authors");
+                });
+
+            modelBuilder.Entity("BookTest.Data.Entities.AuthorBook", b =>
+                {
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AuthorId", "BookId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("AuthorBooks");
                 });
 
             modelBuilder.Entity("BookTest.Data.Entities.Book", b =>
@@ -125,7 +125,7 @@ namespace BookTest.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("AuthorBook", b =>
+            modelBuilder.Entity("BookTest.Data.Entities.AuthorBook", b =>
                 {
                     b.HasOne("BookTest.Data.Entities.Author", "Author")
                         .WithMany("AuthorBooks")

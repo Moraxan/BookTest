@@ -1,10 +1,11 @@
-﻿
-
-namespace BookTest.Common.DTOs
+﻿namespace BookTest.Common.DTOs
 {
-    public class UserDTO
+    // Base class for common properties of a user
+    public class UserBaseDTO
     {
         public int Id { get; set; }
         public string Username { get; set; }
+
+
     }
 }

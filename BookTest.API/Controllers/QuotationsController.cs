@@ -1,55 +1,111 @@
-﻿
-
-namespace BookTest.API.Controllers
+﻿namespace BookTest.API.Controllers
 {
     [ApiController]
     [Route("api/quotations")]
-    public class QuotationsController : Controller
+    public class QuotationController : Controller
     {
         private readonly IDbService _db;
 
-        public QuotationsController(IDbService db)
+        public QuotationController(IDbService db)
         {
             _db = db;
         }
-              
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<QuotationDTO>>> GetAllQuotations()
+        public async Task<ActionResult<IEnumerable<QuotationBaseDTO>>> GetAllQuotations()
         {
-            return await _db.GetAsync<Quotation, QuotationDTO>();
-        }
-       
-        [HttpGet("{id}")]
-        public async Task<ActionResult<QuotationDTO>> GetSingleQuotation(int id)
-        {
-            return await _db.SingleAsync<Quotation, QuotationDTO>(q => q.Id == id);
-        }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutQuotation(int id, QuotationDTO quotation)
-        {
-            if (id != quotation.Id)
+            try
             {
-                return BadRequest();
+                var quotations = await _db.GetAsync<Quotation, QuotationBaseDTO>();
+                return Ok(quotations);
             }
-            await _db.UpdateAsync<Quotation, QuotationDTO>(quotation);
-            return NoContent();
+            catch (Exception)
+            {
+                return StatusCode(500, "An internal error occurred while retrieving quotations.");
+            }
         }
-        
-        [HttpPost]
-        public async Task<ActionResult<QuotationDTO>> PostQuotation(QuotationDTO quotation)
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<QuotationBaseDTO>> GetQuotation(int id)
         {
-            return await _db.AddAsync<Quotation, QuotationDTO>(quotation);
+            try
+            {
+                var quotation = await _db.SingleAsync<Quotation, QuotationBaseDTO>(q => q.Id == id);
+                if (quotation == null)
+                {
+                    return NotFound("Quotation not found.");
+                }
+                return Ok(quotation);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An internal error occurred while retrieving the quotation.");
+            }
         }
-       
+
+        [HttpPost]
+        public async Task<ActionResult<Quotation>> CreateQuotation(QuotationBaseDTO createQuotationDto)
+        {
+            try
+            {
+                // Set DateAdded to the current local DateTime
+                createQuotationDto.DateAdded = DateTime.Now;  // This is local time
+
+                var newQuotation = await _db.AddAsync<Quotation, QuotationBaseDTO>(createQuotationDto);
+                await _db.SaveChangesAsync();
+
+                if (newQuotation == null)
+                {
+                    return BadRequest("Quotation could not be created.");
+                }
+
+                return CreatedAtAction(nameof(GetQuotation), new { id = newQuotation.Id }, newQuotation);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while creating the quotation.");
+            }
+        }
+
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateQuotation(int id, QuotationBaseDTO updateQuotationDto)
+        {
+            try
+            {
+                if (id != updateQuotationDto.Id)
+                {
+                    return BadRequest("Quotation ID mismatch.");
+                }
+
+                _db.Update<Quotation, QuotationBaseDTO>(updateQuotationDto, id);
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while updating the quotation.");
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteQuotation(int id)
         {
-            await _db.DeleteAsync<Quotation>(id);
-            return NoContent();
+            try
+            {
+                bool deleted = await _db.DeleteAsync<Quotation>(id);
+                if (!deleted)
+                {
+                    return NotFound("Quotation not found.");
+                }
+
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while deleting the quotation.");
+            }
         }
-
-
-
     }
-
 }

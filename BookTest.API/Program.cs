@@ -6,14 +6,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<BookContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BookConnection")));
-
 builder.Services.AddScoped<IDbService, DbService>();
 
 
@@ -41,15 +42,24 @@ app.Run();
 static void ConfigureAutomapper(IServiceCollection services)
 {
     var mapperConfig = new MapperConfiguration(cfg =>
-    {
-        // Map Author to AuthorDTO
-        cfg.CreateMap<Author, AuthorDTO>()
-           .ForMember(dest => dest.BookIds, act => act.MapFrom(src => src.AuthorBooks.Select(ab => ab.Book.Id)));
+{
+    // Map Author to AuthorDTO
+    cfg.CreateMap<Author, AuthorDTO>()
+   .ReverseMap();
+    cfg.CreateMap<Author, AuthorReadDTO>()
+    .ForMember(dest => dest.BookIds,
+               opt => opt.MapFrom(src => src.AuthorBooks.Select(ab => ab.BookId)));
 
-        // Map Book to BookDTO
-        cfg.CreateMap<Book, BookDTO>()
-           .ForMember(dest => dest.AuthorIds, act => act.MapFrom(src => src.AuthorBooks.Select(ab => ab.Author.Id)));
-    });
+    // Map Book to BookDTO
+    cfg.CreateMap<Book, BookDTO>()
+    .ReverseMap();
+    cfg.CreateMap<Book, BookReadDTO>()
+    .ForMember(dest => dest.AuthorIds,
+               opt => opt.MapFrom(src => src.AuthorBooks.Select(ab => ab.AuthorId)));
+
+    cfg.CreateMap<AuthorBook, AuthorBookDTO>().ReverseMap();
+
+});
 
 
     IMapper mapper = mapperConfig.CreateMapper();

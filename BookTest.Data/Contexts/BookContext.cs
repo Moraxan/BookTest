@@ -1,29 +1,24 @@
-﻿using BookTest.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BookTest.Data.Contexts
+﻿namespace BookTest.Data.Contexts
 {
     public class BookContext : DbContext
     {
-        DbSet<Book>? Books { get; set; }
-        DbSet<Author>? Authors { get; set; }
+        public DbSet<Book> Books { get; set; }
+        public DbSet<Author> Authors { get; set; }
 
-        DbSet<AuthorBook>? AuthorBooks { get; set; }
+        public DbSet<AuthorBook> AuthorBooks { get; set; }
 
-        DbSet<Quotation>? Quotations { get; set; }
+        public DbSet<Quotation> Quotations { get; set; }
 
-        DbSet<User>? Users { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //Use Lazy Loading
             optionsBuilder.UseLazyLoadingProxies();
             // Specify the database to use (e.g., SQL Server)
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=BookTest;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(
+                "Server=(localdb)\\mssqllocaldb;Database=BookTest;Trusted_Connection=True");
+
         }
         public BookContext(DbContextOptions <BookContext> options) : base(options)
         {
@@ -38,12 +33,14 @@ namespace BookTest.Data.Contexts
             modelBuilder.Entity<AuthorBook>()
                 .HasOne(ab => ab.Book)
                 .WithMany(b => b.AuthorBooks)
-                .HasForeignKey(ab => ab.BookId);
+                .HasForeignKey(ab => ab.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<AuthorBook>()
                 .HasOne(ab => ab.Author)
                 .WithMany(a => a.AuthorBooks)
-                .HasForeignKey(ab => ab.AuthorId);
+                .HasForeignKey(ab => ab.AuthorId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             //SeedData(modelBuilder); //Uncomment this line to seed the database with the data below    
 
@@ -54,8 +51,8 @@ namespace BookTest.Data.Contexts
             //Add Seedata for 5 authors and 5 books
             var authors = new List<Author>
             {
-                new () { Id = 2, Name = "J.R.R. Tolkien" },
                 new () { Id = 1, Name = "J.K. Rowling" },
+                new () { Id = 2, Name = "J.R.R. Tolkien" },
                 new () { Id = 3, Name = "George R.R. Martin" },
                 new () { Id = 4, Name = "Stephen King" },
                 new () { Id = 5, Name = "J.D. Salinger" }
