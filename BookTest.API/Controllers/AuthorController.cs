@@ -63,10 +63,24 @@
                     return BadRequest("Author could not be created.");
                 }
 
+                // Optional: Add books if provided
+                if (createAuthorDto.BookIds != null)
+                {
+                    foreach (var bookId in createAuthorDto.BookIds)
+                    {
+                        var authorBookDto = new AuthorBookDTO { AuthorId = authorEntity.Id, BookId = bookId };
+                        await _db.AddReferenceAsync<AuthorBook, AuthorBookDTO>(authorBookDto);
+                    }
+                    await _db.SaveChangesAsync();
+                }
+
                 return Ok(authorEntity); // Returns a 200 OK response with the Author entity
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                // Log the exception for debugging
+                // LogError(ex, "Error occurred while creating the author.");
+
                 return StatusCode(500, "An error occurred while creating the author.");
             }
         }
@@ -81,15 +95,42 @@
                     return BadRequest("Author ID mismatch.");
                 }
 
-                _db.Update<Author, AuthorReadDTO>(updateAuthorDto, id);
+                var author = await _db.SingleAsync<Author, AuthorDTO>(a => a.Id == id);
+                if (author == null)
+                {
+                    return NotFound();
+                }
+
+                // Update author properties here, e.g., author.Name = updateAuthorDto.Name;
+
+                // Handle books
+                // Delete existing relationships for this author
+                await _db.DeleteByCompositeKey<AuthorBook>(ab => ab.AuthorId == id);
+
+                // Add new relationships
+                foreach (var bookId in updateAuthorDto.BookIds)
+                {
+                    var authorBookDto = new AuthorBookDTO { AuthorId = id, BookId = bookId };
+                    await _db.AddReferenceAsync<AuthorBook, AuthorBookDTO>(authorBookDto);
+                }
+
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                // Log the exception details for debugging purposes
+                // LogError(ex, "Error occurred in PutAuthor");
+
                 return StatusCode(500, "An error occurred while updating the author. Please try again later.");
             }
         }
+
+
+
+
+
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAuthor(int id)
         {

@@ -4,6 +4,7 @@ using BookTest.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookTest.Data.Migrations
 {
     [DbContext(typeof(BookContext))]
-    partial class BookContextModelSnapshot : ModelSnapshot
+    [Migration("20231231124016_InitDatabase")]
+    partial class InitDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,33 +40,6 @@ namespace BookTest.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Authors");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 2,
-                            Name = "J.R.R. Tolkien"
-                        },
-                        new
-                        {
-                            Id = 1,
-                            Name = "J.K. Rowling"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "George R.R. Martin"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Stephen King"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "J.D. Salinger"
-                        });
                 });
 
             modelBuilder.Entity("BookTest.Data.Entities.AuthorBook", b =>
@@ -80,58 +55,6 @@ namespace BookTest.Data.Migrations
                     b.HasIndex("BookId");
 
                     b.ToTable("AuthorBooks");
-
-                    b.HasData(
-                        new
-                        {
-                            AuthorId = 1,
-                            BookId = 1
-                        },
-                        new
-                        {
-                            AuthorId = 1,
-                            BookId = 2
-                        },
-                        new
-                        {
-                            AuthorId = 2,
-                            BookId = 3
-                        },
-                        new
-                        {
-                            AuthorId = 2,
-                            BookId = 4
-                        },
-                        new
-                        {
-                            AuthorId = 3,
-                            BookId = 5
-                        },
-                        new
-                        {
-                            AuthorId = 3,
-                            BookId = 6
-                        },
-                        new
-                        {
-                            AuthorId = 4,
-                            BookId = 7
-                        },
-                        new
-                        {
-                            AuthorId = 4,
-                            BookId = 8
-                        },
-                        new
-                        {
-                            AuthorId = 5,
-                            BookId = 9
-                        },
-                        new
-                        {
-                            AuthorId = 5,
-                            BookId = 10
-                        });
                 });
 
             modelBuilder.Entity("BookTest.Data.Entities.Book", b =>
@@ -153,68 +76,6 @@ namespace BookTest.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Books");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            PublicationDate = new DateTime(1997, 6, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Harry Potter and the Philosopher's Stone"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            PublicationDate = new DateTime(1998, 7, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Harry Potter and the Chamber of Secrets"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            PublicationDate = new DateTime(1954, 7, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "The Lord of the Rings: The Fellowship of the Ring"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            PublicationDate = new DateTime(1954, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "The Lord of the Rings: The Two Towers"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            PublicationDate = new DateTime(1996, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "A Game of Thrones"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            PublicationDate = new DateTime(1998, 11, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "A Clash of Kings"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            PublicationDate = new DateTime(1977, 1, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "The Shining"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            PublicationDate = new DateTime(1978, 10, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "The Stand"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            PublicationDate = new DateTime(1951, 7, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "The Catcher in the Rye"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            PublicationDate = new DateTime(1953, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Nine Stories"
-                        });
                 });
 
             modelBuilder.Entity("Quotation", b =>

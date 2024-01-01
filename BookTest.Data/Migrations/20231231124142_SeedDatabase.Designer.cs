@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookTest.Data.Migrations
 {
     [DbContext(typeof(BookContext))]
-    [Migration("20231221214309_InitDatabase")]
-    partial class InitDatabase
+    [Migration("20231231124142_SeedDatabase")]
+    partial class SeedDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,52 @@ namespace BookTest.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("AuthorBook", b =>
+            modelBuilder.Entity("BookTest.Data.Entities.Author", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Authors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 2,
+                            Name = "J.R.R. Tolkien"
+                        },
+                        new
+                        {
+                            Id = 1,
+                            Name = "J.K. Rowling"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "George R.R. Martin"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Stephen King"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "J.D. Salinger"
+                        });
+                });
+
+            modelBuilder.Entity("BookTest.Data.Entities.AuthorBook", b =>
                 {
                     b.Property<int>("AuthorId")
                         .HasColumnType("int");
@@ -88,51 +133,6 @@ namespace BookTest.Data.Migrations
                         {
                             AuthorId = 5,
                             BookId = 10
-                        });
-                });
-
-            modelBuilder.Entity("BookTest.Data.Entities.Author", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Authors");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 2,
-                            Name = "J.R.R. Tolkien"
-                        },
-                        new
-                        {
-                            Id = 1,
-                            Name = "J.K. Rowling"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "George R.R. Martin"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Stephen King"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "J.D. Salinger"
                         });
                 });
 
@@ -266,7 +266,7 @@ namespace BookTest.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("AuthorBook", b =>
+            modelBuilder.Entity("BookTest.Data.Entities.AuthorBook", b =>
                 {
                     b.HasOne("BookTest.Data.Entities.Author", "Author")
                         .WithMany("AuthorBooks")

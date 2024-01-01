@@ -1,5 +1,5 @@
 ﻿namespace BookTest.Data.Entities;
-public class AuthorBook
+public class AuthorBook : IReference
 {
     public int AuthorId { get; set; }
     public virtual Author? Author { get; set; } // Made virtual for lazy loading

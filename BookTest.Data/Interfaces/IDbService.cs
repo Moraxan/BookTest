@@ -27,5 +27,22 @@
             where TEntity : class, IEntity
             where TDto : class;
 
+        //Methods for join tables
+        Task<TReferenceEntity> AddReferenceAsync<TReferenceEntity, TDto>(TDto dto)
+        where TReferenceEntity : class, IReference, new() // Example constraints
+        where TDto : class;
+
+        Task<bool> DeleteReferenceAsync<TReferenceEntity>(int id)
+            where TReferenceEntity : class, IReference;
+
+        Task<List<TDto>> GetReferenceAsync<TReferenceEntity, TDto>(Expression<Func<TReferenceEntity, bool>> expression)
+            where TReferenceEntity : class, IReference
+            where TDto : class;
+
+        Task<bool> DeleteByCompositeKey<TReferenceEntity>(
+        Expression<Func<TReferenceEntity, bool>> predicate)
+        where TReferenceEntity : class, IReference;
+
     }
+
 }

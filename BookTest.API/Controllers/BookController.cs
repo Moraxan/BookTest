@@ -69,15 +69,14 @@
                 return StatusCode(500, "An error occurred while creating the Book.");
             }
         }
-
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBook(int id, [FromBody] BookReadDTO updateBookDto)
+        public async Task<IActionResult> PutBook(int id, BookReadDTO updateBookDto)
         {
             try
             {
                 if (id != updateBookDto.Id)
                 {
-                    return BadRequest("Book ID mismatch.");
+                    return BadRequest("Author ID mismatch.");
                 }
 
                 _db.Update<Book, BookReadDTO>(updateBookDto, id);
@@ -86,9 +85,10 @@
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while updating the Book. Please try again later.");
+                return StatusCode(500, "An error occurred while updating the author. Please try again later.");
             }
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
@@ -103,8 +103,5 @@
                 return StatusCode(500, "An error occurred while deleting the Book. Please try again later.");
             }
         }
-
-
-
-    }
+    }    
 }
