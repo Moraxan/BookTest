@@ -91,7 +91,20 @@
             };
             modelBuilder.Entity<AuthorBook>()
                 .HasData(authorBooks);
-           
+
+            //Seeded users for authentication
+            var users = new List<User>
+            {
+                new () { Id = 1, Username = "User1", Password = "Password1", RefreshToken = "RefreshToken1" },
+                new () { Id = 2, Username = "User2", Password = "Password2", RefreshToken = "RefreshToken2" },
+                new () { Id = 3, Username = "User3", Password = "Password3", RefreshToken = "RefreshToken3" }
+            };
+
+            modelBuilder.Entity<User>()
+                .HasData(users);
+
+
         }
+
     }
 }

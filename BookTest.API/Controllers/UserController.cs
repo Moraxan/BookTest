@@ -1,8 +1,10 @@
-﻿namespace BookTest.API.Controllers
+﻿
+
+namespace BookTest.API.Controllers
 {
     [ApiController]
-    [Route("api/users")]
-    public class UserController : Controller
+    [Route("[controller]")]
+    public class UserController : ControllerBase
     {
         private readonly IDbService _db;
 
@@ -11,96 +13,108 @@
             _db = db;
         }
 
+        // GET: user
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserBaseDTO>>> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
             try
             {
-                var users = await _db.GetAsync<User, UserBaseDTO>();
+                var users = await _db.GetAsync<User, UserReadDTO>(); // Use UserReadDTO
                 return Ok(users);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An internal error occurred while retrieving users.");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
+        // GET: user/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserBaseDTO>> GetUser(int id)
+        public async Task<IActionResult> GetUserById(int id)
         {
             try
             {
-                var user = await _db.SingleAsync<User, UserBaseDTO>(u => u.Id == id);
+                var user = await _db.SingleAsync<User, UserReadDTO>(u => u.Id == id); // Use UserReadDTO
                 if (user == null)
                 {
-                    return NotFound("User not found.");
+                    return NotFound();
                 }
+
                 return Ok(user);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An internal error occurred while retrieving the user.");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
+        // POST: user
         [HttpPost]
-        public async Task<ActionResult<User>> CreateUser(UserBaseDTO createUserDto)
+        public async Task<IActionResult> CreateUser([FromBody] UserDTO userDto) // Use UserDTO
         {
             try
             {
-                var newUser = await _db.AddAsync<User, UserBaseDTO>(createUserDto);
-                await _db.SaveChangesAsync();
-
-                if (newUser == null)
+                if (userDto == null)
                 {
-                    return BadRequest("User could not be created.");
+                    return BadRequest("User data is null.");
                 }
 
-                return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, newUser);
+                // Check if user already exists
+                bool userExists = await _db.AnyAsync<User>(u => u.Username == userDto.Username);
+                if (userExists)
+                {
+                    return BadRequest("User already exists.");
+                }
+
+                var createdUser = await _db.AddAsync<User, UserDTO>(userDto); // Use UserDTO
+                await _db.SaveChangesAsync();
+                return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while creating the user.");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
+        // PUT: user/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, UserBaseDTO updateUserDto)
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserReadDTO userDto) // Use UserDTO
         {
             try
             {
-                if (id != updateUserDto.Id)
+                if (id != userDto.Id)
                 {
-                    return BadRequest("User ID mismatch.");
+                    return BadRequest("ID mismatch");
                 }
 
-                _db.Update<User, UserBaseDTO>(updateUserDto, id);
+                _db.Update<User, UserDTO>(userDto, id); // Use UserDTO
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while updating the user.");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
+        // DELETE: user/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             try
             {
-                bool deleted = await _db.DeleteAsync<User>(id);
+                var deleted = await _db.DeleteAsync<User>(id);
                 if (!deleted)
                 {
-                    return NotFound("User not found.");
+                    return NotFound();
                 }
 
                 await _db.SaveChangesAsync();
                 return NoContent();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while deleting the user.");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
     }

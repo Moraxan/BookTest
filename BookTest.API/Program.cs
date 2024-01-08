@@ -10,8 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.ReferenceHandler = null;
 });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -23,7 +24,7 @@ builder.Services.AddScoped<IDbService, DbService>();
 // Configure AutoMapper
 ConfigureAutomapper(builder.Services);
 
-var app = builder.Build();
+
 
 // Configure JwtSettings
 var jwtSettings = new JwtSettings();
@@ -51,6 +52,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+var app = builder.Build();
 
 
 // Configure the HTTP request pipeline.
@@ -88,6 +90,9 @@ static void ConfigureAutomapper(IServiceCollection services)
                opt => opt.MapFrom(src => src.AuthorBooks.Select(ab => ab.AuthorId)));
 
     cfg.CreateMap<AuthorBook, AuthorBookDTO>().ReverseMap();
+
+    cfg.CreateMap<UserDTO, User>().ReverseMap();
+    cfg.CreateMap<User, UserReadDTO>().ReverseMap();
 
 });
 

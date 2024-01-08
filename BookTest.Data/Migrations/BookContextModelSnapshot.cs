@@ -42,13 +42,13 @@ namespace BookTest.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 2,
-                            Name = "J.R.R. Tolkien"
+                            Id = 1,
+                            Name = "J.K. Rowling"
                         },
                         new
                         {
-                            Id = 1,
-                            Name = "J.K. Rowling"
+                            Id = 2,
+                            Name = "J.R.R. Tolkien"
                         },
                         new
                         {
@@ -217,16 +217,13 @@ namespace BookTest.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Quotation", b =>
+            modelBuilder.Entity("BookTest.Data.Entities.Quotation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime2");
@@ -240,20 +237,26 @@ namespace BookTest.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Quotations");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("BookTest.Data.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -262,6 +265,29 @@ namespace BookTest.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Password = "Password1",
+                            RefreshToken = "RefreshToken1",
+                            Username = "User1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Password = "Password2",
+                            RefreshToken = "RefreshToken2",
+                            Username = "User2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Password = "Password3",
+                            RefreshToken = "RefreshToken3",
+                            Username = "User3"
+                        });
                 });
 
             modelBuilder.Entity("BookTest.Data.Entities.AuthorBook", b =>
@@ -283,21 +309,13 @@ namespace BookTest.Data.Migrations
                     b.Navigation("Book");
                 });
 
-            modelBuilder.Entity("Quotation", b =>
+            modelBuilder.Entity("BookTest.Data.Entities.Quotation", b =>
                 {
-                    b.HasOne("BookTest.Data.Entities.Author", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("User", "User")
+                    b.HasOne("BookTest.Data.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Author");
 
                     b.Navigation("User");
                 });

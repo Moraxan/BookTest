@@ -1,10 +1,15 @@
 ﻿namespace BookTest.Common.DTOs
 {
-    // Base class for common properties of a user
-    public class UserBaseDTO
-    { 
-        public int Id { get; set; }
+    public class UserDTO
+    {
+
         public string Username { get; set; }
-c        public string RefreshToken { get; set; } // Optional, for refresh token logic
+        public string Password { get; set; } // Add this line
+        public string RefreshToken { get; set; }
+    }
+
+    public class UserReadDTO : UserDTO
+    {
+        public int Id { get; set; }
     }
 }

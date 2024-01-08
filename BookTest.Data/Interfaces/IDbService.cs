@@ -23,7 +23,7 @@
         Task<TDto> SingleAsync<TEntity, TDto>(Expression<Func<TEntity, bool>> expression)
             where TEntity : class, IEntity
             where TDto : class;
-        void Update<TEntity, TDto>(TDto dto, int id)
+       void Update<TEntity, TDto>(TDto dto, int id)
             where TEntity : class, IEntity
             where TDto : class;
 
