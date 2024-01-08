@@ -2,10 +2,9 @@
 {
     // Base class for common properties of a user
     public class UserBaseDTO
-    {
+    { 
         public int Id { get; set; }
         public string Username { get; set; }
-
-
+c        public string RefreshToken { get; set; } // Optional, for refresh token logic
     }
 }

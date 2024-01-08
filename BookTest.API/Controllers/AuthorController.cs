@@ -1,4 +1,4 @@
-﻿namespace AuthorTest.API.Controllers
+﻿namespace BookTest.API.Controllers
 {
     [ApiController]
     [Route("api/authors")]
