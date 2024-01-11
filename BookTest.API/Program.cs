@@ -1,6 +1,9 @@
 
 
-using BookTest.Data.Services;
+
+
+using BookTest.Data.Authentication;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,8 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.ReferenceHandler = null;
 });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -20,6 +24,36 @@ builder.Services.AddScoped<IDbService, DbService>();
 
 // Configure AutoMapper
 ConfigureAutomapper(builder.Services);
+
+
+
+// Configure JwtSettings
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
+
+
+// Configure JWT Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var serviceProvider = builder.Services.BuildServiceProvider();
+    var jwtSettings = serviceProvider.GetService<IOptions<JwtSettings>>().Value;
+
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        RequireExpirationTime = false,
+        ValidateLifetime = true
+    };
+});
 
 var app = builder.Build();
 
@@ -33,9 +67,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.MapControllers();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
 
@@ -58,6 +93,9 @@ static void ConfigureAutomapper(IServiceCollection services)
                opt => opt.MapFrom(src => src.AuthorBooks.Select(ab => ab.AuthorId)));
 
     cfg.CreateMap<AuthorBook, AuthorBookDTO>().ReverseMap();
+
+    cfg.CreateMap<UserDTO, User>().ReverseMap();
+    cfg.CreateMap<User, UserReadDTO>().ReverseMap();
 
 });
 

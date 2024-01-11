@@ -5,3 +5,7 @@ global using BookTest.Data.Entities;
 global using BookTest.Data.Interfaces;
 global using BookTest.Common.DTOs;
 global using Microsoft.AspNetCore.Mvc;
+global using BookTest.Data.Services;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.IdentityModel.Tokens;
+global using System.Text;
