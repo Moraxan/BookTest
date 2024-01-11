@@ -3,6 +3,7 @@
 
 
 using BookTest.Data.Authentication;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,9 +28,8 @@ ConfigureAutomapper(builder.Services);
 
 
 // Configure JwtSettings
-var jwtSettings = new JwtSettings();
-builder.Configuration.Bind(nameof(JwtSettings), jwtSettings);
-builder.Services.AddSingleton(jwtSettings);
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
+
 
 // Configure JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -40,6 +40,9 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    var serviceProvider = builder.Services.BuildServiceProvider();
+    var jwtSettings = serviceProvider.GetService<IOptions<JwtSettings>>().Value;
+
     options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {

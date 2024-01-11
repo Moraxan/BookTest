@@ -10,17 +10,20 @@ namespace BookTest.Controllers
     public class AuthController : ControllerBase
     {
         private readonly JwtSettings _jwtSettings;
+        private readonly IDbService _db;
 
-        public AuthController(IOptions<JwtSettings> jwtSettings)
+        public AuthController(IDbService db, IOptions<JwtSettings> jwtSettings)
         {
             _jwtSettings = jwtSettings.Value;
+            _db = db;
         }
 
+        
         [HttpPost("login")]
-        public IActionResult Login([FromBody] UserLoginRequest request)
+        public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
         {
             // Validate the user credentials
-            var user = ValidateUser(request.Username, request.Password);
+            var user = await ValidateUser(request.Username, request.Password);
             if (user == null)
             {
                 return Unauthorized();
@@ -55,17 +58,28 @@ namespace BookTest.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-
-        private User ValidateUser(string username, string password)
+        private bool VerifyPassword(string providedPassword, string storedPassword)
         {
-            // For now, this is a placeholder 
-            // In a real application, you would typically validate against a database
+            // In a real application, replace this with secure password hashing and comparison
+            return providedPassword == storedPassword;
+        }
 
-            // Example:
-            // var user = userRepository.GetUserByUsername(username);
-            // if (user != null && VerifyPassword(password, user.Password)) { return user; }
+        private async Task<User> ValidateUser(string username, string password)
+        {
+            // Fetch the user based on the username
+            var user = await _db.SingleAsync<User, User>(u => u.Username == username);
 
-            return null; // Replace with actual validation
+            if (user != null)
+            {
+                // Verify the user's password (make sure to use secure password comparison, e.g., hashed passwords)
+                bool isPasswordValid = VerifyPassword(password, user.Password);
+                if (isPasswordValid)
+                {
+                    return user;
+                }
+            }
+
+            return null;
         }
     }
 
